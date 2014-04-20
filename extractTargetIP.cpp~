@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main (int argc, char *argv[]) {
+
+	FILE *inPtr, *outPtr;
+	char line[4096];
+	char targetIP[64];
+	char VP[256];
+	char fName[128];
+	char *tmp;
+
+	inPtr = fopen("./dataset/set_cover_IP_results", "r");
+	if ( inPtr == NULL ) {
+		printf("ERROR in opening input file!\n");
+		return 0;
+	}
+
+	while ( fgets(line, 4096, inPtr) != NULL ) {
+		
+		/* check for each target IP:
+		 * if there is a VP within 3 hops, continue;
+		 * otherwise, skip this record 
+		 * (because the forward path plus reverse path may contain more hops than what record-route can contain)*/
+		if ( strstr(line, ";1;") == NULL && strstr(line, ";2;") == NULL && strstr(line, ";3;") == NULL )
+			continue;
+
+		printf("found target IP \n");
+		tmp = strtok(line, " ;"); /* get the target IP address*/
+		strcpy(targetIP, tmp);
+		tmp = strtok(NULL, " ;"); /* get the first VP IP address */
+		strcpy(VP, tmp);
+		//tmp = strtok(NULL, " ;"); /* get the hop count of the first IP address */
+		printf("target IP: %s; VP address: %s\n", targetIP, VP);
+
+		sprintf(fName,"./dataset/targetIP/%s", targetIP);
+		printf("file name: %s\n", fName);
+		outPtr = fopen(fName,"w");
+		fprintf(outPtr,"%s\n", targetIP);
+		fprintf(outPtr,"%s\n", VP);
+		fclose(outPtr);
+
+		//break;
+	}
+
+	fclose(inPtr);
+
+	return 0;
+}

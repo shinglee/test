@@ -1,0 +1,19 @@
+#!/bin/sh
+
+#echo "(T|A,B,C,D)"
+#echo "Target: $1"
+#echo "A: $2"
+#echo "B: $3"
+#echo "C: $4"
+#echo "D: $5"
+
+
+#fName = "./dataset/targetIP"
+cat ./dataset/targetIP | while read line
+#cat ./dataset/temp | while read line
+do
+	echo $line
+	sudo scamper -c "ping -P icmp-echo -T tsprespec=$line,$line,$line,$line" -i $line #-o ./dataset/timestamp/$line
+done
+
+#sudo scamper -c "ping -P icmp-echo -T tsprespec=$2,$3,$4,$5" -i $1
